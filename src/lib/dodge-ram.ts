@@ -12,6 +12,9 @@ export async function dodgeRam<T extends NSClosure>(
 	closure: T,
 	cost = 8 - baseCost
 ): Promise<NSClosureReturn<T>> {
+	if (RamDodger.closure_promise) {
+		await RamDodger.closure_promise;
+	}
 	const pid = ns.exec(dodgeRamFile, "home", {
 		temporary: true,
 		ramOverride: baseCost + cost,
