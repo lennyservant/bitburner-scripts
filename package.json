@@ -22,7 +22,6 @@
   "license": "MIT",
   "dependencies": {
     "react": "17",
-    "react-dom": "17",
-    "viteburner-plugin-inline-css": "link:..\\..\\vite-plugins\\viteburner-plugin-inline-css"
+    "react-dom": "17"
   }
 }
