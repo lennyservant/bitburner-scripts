@@ -2,9 +2,30 @@
 import { defineConfig } from "viteburner";
 import { resolve } from "path";
 import type { Plugin } from "vite";
+import AST from "unplugin-ast/vite";
+import type { Transformer } from "unplugin-ast";
+import type { StringLiteral } from "@babel/types";
 
-function transformBCss() {
-	const moduleCSSFilter = /\.module\.bcss$/;
+function applyScriptNameMacro(): Transformer<StringLiteral> {
+	return {
+		onNode: (node) =>
+			node.type === "CallExpression" &&
+			node.callee.type === "Identifier" &&
+			node.callee.name == "$scriptName",
+		transform(node, code, context) {
+			console.log(`applied macro to ${context.id}`);
+			return {
+				type: "StringLiteral",
+				value: context.id
+					.slice(__dirname.length)
+					.replace(/\.[jt]sx?$/, ".js")
+					.replace(/^\/src\//, ""),
+			};
+		},
+	};
+}
+
+function transformBCss(): Plugin {
 	const cssFilter = /\.bcss$/;
 	return {
 		name: "lenny-bcss-transform",
@@ -17,7 +38,7 @@ function transformBCss() {
 					};
 			}
 		},
-	} satisfies Plugin;
+	};
 }
 
 export default defineConfig({
@@ -68,7 +89,12 @@ export default defineConfig({
 		sourcemap: "inline",
 	},
 
-	plugins: [transformBCss()],
+	plugins: [
+		AST({
+			transformer: [applyScriptNameMacro()],
+		}),
+		transformBCss(),
+	],
 
 	esbuild: {
 		jsx: `transform`,

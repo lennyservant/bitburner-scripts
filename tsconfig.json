@@ -36,6 +36,7 @@
     "src/**/*",
     "src/**/*.js",
     "NetscriptDefinitions.d.ts",
+    "macros.d.ts",
     "vite.config.ts",
     "vite.config.js"
   ]
