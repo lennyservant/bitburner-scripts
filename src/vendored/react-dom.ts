@@ -2,19 +2,19 @@
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
-export default eval('window')["ReactDOM"];
+export default eval("window")["ReactDOM"];
 // @ts-ignore
-export type * from 'react-dom';
+export type * from "react-dom";
 // @ts-ignore
 export const {
-  createPortal,
-  findDOMNode,
-  flushSync,
-  hydrate,
-  render,
-  unmountComponentAtNode,
-  unstable_batchedUpdates,
-  unstable_renderSubtreeIntoContainer,
-  version,
-  // @ts-ignore
+	createPortal,
+	findDOMNode,
+	flushSync,
+	hydrate,
+	render,
+	unmountComponentAtNode,
+	unstable_batchedUpdates,
+	unstable_renderSubtreeIntoContainer,
+	version,
+	// @ts-ignore
 } = ReactDOM;
