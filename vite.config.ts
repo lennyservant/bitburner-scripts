@@ -5,6 +5,7 @@ import type { Plugin } from "vite";
 import AST from "unplugin-ast/vite";
 import type { Transformer } from "unplugin-ast";
 import type { StringLiteral } from "@babel/types";
+import { readFile } from "fs/promises";
 
 function applyScriptNameMacro(): Transformer<StringLiteral> {
 	return {
@@ -41,6 +42,24 @@ function transformBCss(): Plugin {
 	};
 }
 
+function wasm(): Plugin {
+	const wasmFilter = /\.wasm$/;
+	return {
+		name: "lenny-wasm-transform",
+		enforce: "pre",
+		async load(id, options) {
+			if (!wasmFilter.test(id)) return;
+			console.log(`trying to load wasm ${id}`);
+			const bytes = await readFile(id);
+			return {
+				code: `export default await WebAssembly.compile(Uint8Array.from(atob("${bytes.toString(
+					"base64"
+				)}"), c => c.charCodeAt(0)))`,
+			};
+		},
+	};
+}
+
 export default defineConfig({
 	resolve: {
 		// alias: {
@@ -69,7 +88,7 @@ export default defineConfig({
 	},
 	viteburner: {
 		watch: [
-			{ pattern: "src/**/*.{js,ts}", transform: true },
+			{ pattern: "src/**/!(*.d).{js,ts}", transform: true },
 			{
 				pattern: "src/**/*.tsx",
 				transform: true, // tsx
@@ -84,12 +103,20 @@ export default defineConfig({
 					filename: file.replace(/bcss?$/, "js").replace(/^src/, ""),
 				}),
 			},
+			{
+				pattern: "src/**/*.wasm",
+				transform: true, // css
+				location: (file) => ({
+					filename: file.replace(/wasm?$/, "js").replace(/^src/, ""),
+				}),
+			},
 			{ pattern: "src/**/*.{script,txt}" },
 		],
 		sourcemap: "inline",
 	},
 
 	plugins: [
+		wasm(),
 		AST({
 			transformer: [applyScriptNameMacro()],
 		}),
