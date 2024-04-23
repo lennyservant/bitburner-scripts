@@ -1,6 +1,6 @@
 import { NSClosure, NSClosureReturn } from "./dodge-ram";
 
-export class RamDodger {
+export class RamManager {
 	static closure_func?: NSClosure<unknown> = undefined;
 	static closure_promise?: Promise<any> = undefined;
 	static closure_resolve?: (value: any) => void = undefined;
